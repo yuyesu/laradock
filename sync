@@ -37,53 +37,53 @@ print_style () {
 }
 
 display_options () {
-    printf "Available options:\n";
-    print_style "   install" "info"; printf "\t\t Installs docker-sync gem on the host machine.\n"
-    print_style "   up [services]" "success"; printf "\t Starts docker-sync and runs docker compose.\n"
-    print_style "   down" "success"; printf "\t\t\t Stops containers and docker-sync.\n"
-    print_style "   bash" "success"; printf "\t\t\t Opens bash on the workspace with user laradock.\n"
-    print_style "   sync" "info"; printf "\t\t\t Manually triggers the synchronization of files.\n"
-    print_style "   clean" "danger"; printf "\t\t Removes all files from docker-sync.\n"
+    printf "可用选项:\n";
+    print_style "   install" "info"; printf "\t\t 安装 docker-sync.\n"
+    print_style "   up [services]" "success"; printf "\t 启动服务.\n"
+    print_style "   down" "success"; printf "\t\t\t 停止服务.\n"
+    print_style "   bash" "success"; printf "\t\t\t 以用户laradock打开工作容器终端.\n"
+    print_style "   sync" "info"; printf "\t\t\t 手动触发文件同步.\n"
+    print_style "   clean" "danger"; printf "\t\t 移除所有文件.\n"
 }
 
 if [[ $# -eq 0 ]] ; then
-    print_style "Missing arguments.\n" "danger"
+    print_style "缺少参数.\n" "danger"
     display_options
     exit 1
 fi
 
 if [ "$1" == "up" ] ; then
-    print_style "Initializing Docker Sync\n" "info"
-    print_style "May take a long time (15min+) on the first run\n" "info"
+    print_style "初始化 docker-sync\n" "info"
+    print_style "第一次运行需15分钟以上\n" "info"
     docker-sync start;
 
-    print_style "Initializing Docker Compose\n" "info"
+    print_style "初始化 docker-compose\n" "info"
     shift # removing first argument
     docker-compose up -d ${@}
 
 elif [ "$1" == "down" ]; then
-    print_style "Stopping Docker Compose\n" "info"
+    print_style "停止 docker-compose\n" "info"
     docker-compose stop
 
-    print_style "Stopping Docker Sync\n" "info"
+    print_style "正在停止 docker-sync\n" "info"
     docker-sync stop
 
 elif [ "$1" == "bash" ]; then
     docker-compose exec --user=laradock workspace bash
 
 elif [ "$1" == "install" ]; then
-    print_style "Installing docker-sync\n" "info"
+    print_style "安装 docker-sync\n" "info"
     gem install docker-sync
 
 elif [ "$1" == "sync" ]; then
-    print_style "Manually triggering sync between host and docker-sync container.\n" "info"
+    print_style "手动触发同步 between host and docker-sync container.\n" "info"
     docker-sync sync;
 
 elif [ "$1" == "clean" ]; then
-    print_style "Removing and cleaning up files from the docker-sync container.\n" "warning"
+    print_style "清除容器中所有文件.\n" "warning"
     docker-sync clean
 else
-    print_style "Invalid arguments.\n" "danger"
+    print_style "不合法参数.\n" "danger"
     display_options
     exit 1
 fi
